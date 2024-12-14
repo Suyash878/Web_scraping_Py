@@ -1,9 +1,13 @@
 from flask import Flask, jsonify
+from flask_cors import CORS  # Import CORS
 from bs4 import BeautifulSoup
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
+
+# Enable CORS for all routes
+CORS(app)
 
 # Variable to store the scraped headlines
 scraped_headlines = []
