@@ -40,6 +40,6 @@ if __name__ == '__main__':
 
     # Start the Flask app
     try:
-        app.run(debug=True)
+        app.run(debug=True, host='0.0.0.0', port=10000)
     except (KeyboardInterrupt, SystemExit):
         scheduler.shutdown()
