@@ -12,12 +12,13 @@ CORS(app)
 # Variables to store the scraped headlines and subtext
 scraped_headlines = []
 scraped_subtext = []
+scraped_otherReads = []
 
 def scrape_news():
     """
     Function to scrape news from BBC and update the global headlines and subtext lists.
     """
-    global scraped_headlines, scraped_subtext
+    global scraped_headlines, scraped_subtext, scraped_otherReads
     try:
         # Fetch and parse the HTML
         html_text = requests.get('https://www.bbc.com/news').text
@@ -26,11 +27,15 @@ def scrape_news():
         # Scrape headlines and subtexts
         headlines = soup.find_all('h2', class_='sc-8ea7699c-3 kwWByH')
         paras = soup.find_all('p', class_='sc-f98732b0-0 iQbkqW')
+        other_reads = soup.find_all('h2', class_='sc-8ea7699c-3 dhclWg')
         
         # Extract and store the text
         scraped_headlines = [headline.text.strip() for headline in headlines]
         scraped_subtext = [para.text.strip() for para in paras]
+        scraped_otherReads = [other_read.text.strip() for other_read in other_reads]
         
+        print(scraped_otherReads)
+
         # Log the number of items scraped
         print(f"Scraped {len(scraped_headlines)} headlines and {len(scraped_subtext)} subtexts.")
     except Exception as e:
@@ -46,8 +51,10 @@ def get_news():
         {"headline": scraped_headlines[i], "subtext": scraped_subtext[i]}
         for i in range(min(len(scraped_headlines), len(scraped_subtext)))  # Handle mismatch in list lengths
     ]
+
+    other_reads = []
     
-    return jsonify(results)
+    return jsonify(results,scraped_otherReads)
 
 if __name__ == '__main__':
     # Scheduler setup
