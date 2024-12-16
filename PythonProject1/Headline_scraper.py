@@ -33,8 +33,6 @@ def scrape_news():
         scraped_headlines = [headline.text.strip() for headline in headlines]
         scraped_subtext = [para.text.strip() for para in paras]
         scraped_otherReads = [other_read.text.strip() for other_read in other_reads]
-        
-        print(scraped_otherReads)
 
         # Log the number of items scraped
         print(f"Scraped {len(scraped_headlines)} headlines and {len(scraped_subtext)} subtexts.")
@@ -44,17 +42,23 @@ def scrape_news():
 @app.route('/news', methods=['GET'])
 def get_news():
     """
-    API endpoint to fetch the latest scraped news.
+    API endpoint to fetch the latest scraped news and other reads.
     """
-    # Combine headlines and subtexts into a single list of dictionaries
-    results = [
+    # Combine headlines and subtexts into a list of dictionaries for main news
+    news = [
         {"headline": scraped_headlines[i], "subtext": scraped_subtext[i]}
         for i in range(min(len(scraped_headlines), len(scraped_subtext)))  # Handle mismatch in list lengths
     ]
 
-    other_reads = []
-    
-    return jsonify(results,scraped_otherReads)
+    # Structure the response with separate keys for main news and other reads
+    response = {
+        "news": news,  # Main news section
+        "other_reads": scraped_otherReads  # Other reads section
+    }
+
+    return jsonify(response)
+
+
 
 if __name__ == '__main__':
     # Scheduler setup
